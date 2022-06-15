@@ -1,18 +1,49 @@
-import React from 'react';
+import React from "react";
+
+import Form from "./form";
+import ToDo from "./ToDo";
 
 function App() {
-  const [textInputPush, setTextInputPush] = React.useState('');
-  const [inputPush, setInputPush] = React.useState();
+  const [inputPush, setInputPush] = React.useState([]);
+
+  const addTask = (textInputPush) => {
+    if (textInputPush) {
+      const element = {
+        id: Math.random().toString(3),
+        tittle: textInputPush,
+        complete: false,
+      };
+      setInputPush([...inputPush, element]);
+    }
+  };
+
+  const removeTask = (id) => {
+    setInputPush([...inputPush.filter((todo) => todo.id !== id)]);
+  };
+
+  const activeTask = (id) => {
+    setInputPush([
+      ...inputPush.map((todo) =>
+        todo.id === id ? { ...todo, complete: !todo.complete } : { ...todo }
+      ),
+    ]);
+  };
 
   return (
     <div className="window">
-      <input
-        type="text"
-        placeholder="Введите задачу"
-        value={textInputPush}
-        onChange={(e) => setTextInputPush(e.target.value)}
-      />
-      <div className="tasks">{inputPush}</div>
+      <Form addTask={addTask} />
+      <div className="tasks">
+        {inputPush.map((todo) => {
+          return (
+            <ToDo
+              key={todo.id}
+              todo={todo}
+              activeTask={activeTask}
+              removeTask={removeTask}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }
